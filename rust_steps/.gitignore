@@ -3,3 +3,5 @@
 
 # JetBrains IDE
 .idea/
+
+.build_counter
