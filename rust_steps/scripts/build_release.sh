@@ -27,8 +27,8 @@ echo "Deploying binary to $OUT_DIR..."
 mkdir -p "$OUT_DIR"
 
 cp -f "target/release/$BIN_NAME" "$OUT_DIR/$COPIED_BIN_NAME"
-chmod +x "$OUT_DIR/$BIN_NAME"
+chmod +x "$OUT_DIR/$COPIED_BIN_NAME"
 
 echo "Done. Binary available at:"
-echo "$OUT_DIR/$BIN_NAME"
-rust_steps
+echo "$OUT_DIR/$COPIED_BIN_NAME"
+"$COPIED_BIN_NAME"
