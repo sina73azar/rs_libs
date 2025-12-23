@@ -21,8 +21,29 @@ fn main() {
     println!("y = {}",y);
 
     println!("<----------------------part 3---------------------->");
-    let input = read_line("enter something");
-    println!("input = {}",input);
+    let _target: i32 = loop {
+        let input = read_line("enter countering number");
+
+        match input.parse::<i32>() {
+            Ok(n) => break n,
+            Err(_) => {
+                println!("Invalid number, try again.");
+            }
+        }
+    };
+
+
+    println!("<----------------------part 5---------------------->");
+    for i in 1..=10 {
+      if i == 3 {
+        continue; // skip 3
+      }
+      if i == 5 {
+        break; // stop before printing 5
+      }
+      println!("i is: {}", i);
+    }
+
 }
 
 
@@ -47,7 +68,14 @@ fn append_exclamation(s: &mut String) {
 use std::io;
 
 fn read_line(s: &str) -> String {
-    println!(s);
+
+    let mut test_input = String::new();
+    let res = io::stdin()
+        .read_line(&mut test_input);
+    println!("{:?}", res);
+
+
+    println!("{}",s);
     let mut input = String::new();
     io::stdin()
         .read_line(&mut input)
