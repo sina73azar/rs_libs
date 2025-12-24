@@ -1,24 +1,23 @@
 fn main() {
-
     println!("<----------------------part 1---------------------->");
     let result = add(3, 4);
     println!("3 + 4 = {result}");
-    println!("3 - 4 = {}",minus(3, 4));
+    println!("3 - 4 = {}", minus(3, 4));
     let msg = String::from("hello");
     print_length(&msg);
-    println!("msg = {}",msg);
+    println!("msg = {}", msg);
     print_length("world wonder");
     let mut msg1 = String::from("hello");
     print_length(&msg1);
     append_exclamation(&mut msg1);
-    println!("msg = {}",msg1);
+    println!("msg = {}", msg1);
 
     println!("<----------------------part 2---------------------->");
     let x = 5;
     //println!("The value of x is: {x}");
     let mut y = x.to_string();
     append_exclamation(&mut y);
-    println!("y = {}",y);
+    println!("y = {}", y);
 
     println!("<----------------------part 3---------------------->");
     let _target: i32 = loop {
@@ -32,20 +31,17 @@ fn main() {
         }
     };
 
-
     println!("<----------------------part 5---------------------->");
     for i in 1..=10 {
-      if i == 3 {
-        continue; // skip 3
-      }
-      if i == 5 {
-        break; // stop before printing 5
-      }
-      println!("i is: {}", i);
+        if i == 3 {
+            continue; // skip 3
+        }
+        if i == 5 {
+            break; // stop before printing 5
+        }
+        println!("i is: {}", i);
     }
-
 }
-
 
 fn add(a: i32, b: i32) -> i32 {
     a + b // expression return, no semicolon
@@ -55,11 +51,9 @@ fn minus(a: i32, b: i32) -> i32 {
     a - b // expression return, no semicolon
 }
 
-
 fn print_length(s: &str) {
     println!("length = {}", s.len());
 }
-
 
 fn append_exclamation(s: &mut String) {
     s.push('!');
@@ -68,14 +62,11 @@ fn append_exclamation(s: &mut String) {
 use std::io;
 
 fn read_line(s: &str) -> String {
-
     let mut test_input = String::new();
-    let res = io::stdin()
-        .read_line(&mut test_input);
+    let res = io::stdin().read_line(&mut test_input);
     println!("{:?}", res);
 
-
-    println!("{}",s);
+    println!("{}", s);
     let mut input = String::new();
     io::stdin()
         .read_line(&mut input)
