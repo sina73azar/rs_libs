@@ -1,7 +1,10 @@
 # Rust
-/target/
+**/target/
 
 # JetBrains IDE
 .idea/
+**/.idea/
 
+# OS noise
+.DS_Store
 .build_counter
