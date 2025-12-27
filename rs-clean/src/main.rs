@@ -13,6 +13,7 @@ fn main() -> io::Result<()> {
 struct Config {
     root: PathBuf,
     dry_run: bool,
+    force: bool,
 }
 
 impl Config {
@@ -28,11 +29,13 @@ impl Config {
 
         let mut root = PathBuf::from(".");
         let mut dry_run = true;
+        let mut force = false;
 
         while let Some(arg) = args.next() {
             match arg.as_str() {
                 "--dry-run" => dry_run = true,
                 "--apply" => dry_run = false,
+                "--force" => force = true,
                 "--root" => {
                     let Some(p) = args.next() else {
                         return Err(io::Error::new(
@@ -56,7 +59,11 @@ impl Config {
             }
         }
 
-        Ok(Self { root, dry_run })
+        Ok(Self {
+            root,
+            dry_run,
+            force,
+        })
     }
 }
 
@@ -78,8 +85,47 @@ OPTIONS:
 }
 
 fn run(cfg: Config) -> io::Result<()> {
-    println!("Scanning {:?} (dry_run={})", cfg.root, cfg.dry_run);
+    let root_canon = cfg.root.canonicalize().map_err(|e| {
+        io::Error::new(
+            io::ErrorKind::InvalidInput,
+            format!("invalid --root {:?}: {e}", cfg.root),
+        )
+    })?;
+
+    if !cfg.dry_run {
+        enforce_safety_guard(&root_canon, cfg.force)?;
+    }
+
+    println!(
+        "Scanning {:?} (dry_run={}, force={})",
+        root_canon, cfg.dry_run, cfg.force
+    );
     visit_dir(&cfg.root, cfg.dry_run)
+}
+
+fn enforce_safety_guard(root: &Path, force: bool) -> io::Result<()> {
+    let is_root = root == Path::new("/");
+
+    // HOME is the most common catastrophic target (lots of projects under it).
+    // Refuse deleting under HOME unless --force is provided.
+    let home = env::var_os("HOME").map(PathBuf::from);
+    let is_home = home
+        .as_ref()
+        .and_then(|h| h.canonicalize().ok())
+        .map(|h| h == root)
+        .unwrap_or(false);
+
+    if (is_root || is_home) && !force {
+        let what = if is_root { "/" } else { "$HOME" };
+        return Err(io::Error::new(
+            io::ErrorKind::PermissionDenied,
+            format!(
+                "refusing to run with --apply on dangerous root ({what}). Re-run with --force if you are sure."
+            ),
+        ));
+    }
+
+    Ok(())
 }
 
 fn visit_dir(path: &Path, dry_run: bool) -> io::Result<()> {
