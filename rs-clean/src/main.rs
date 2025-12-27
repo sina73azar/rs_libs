@@ -1,7 +1,5 @@
 use std::{
-    env,
-    fs,
-    io,
+    env, fs, io,
     path::{Path, PathBuf},
 };
 
@@ -129,6 +127,7 @@ fn enforce_safety_guard(root: &Path, force: bool) -> io::Result<()> {
 }
 
 fn visit_dir(path: &Path, dry_run: bool) -> io::Result<()> {
+    println!("visit_dir called for {:?}", path);
     if !path.is_dir() {
         return Ok(());
     }
