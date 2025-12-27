@@ -127,7 +127,6 @@ fn enforce_safety_guard(root: &Path, force: bool) -> io::Result<()> {
 }
 
 fn visit_dir(path: &Path, dry_run: bool) -> io::Result<()> {
-    println!("visit_dir called for {:?}", path);
     if !path.is_dir() {
         return Ok(());
     }
@@ -137,6 +136,12 @@ fn visit_dir(path: &Path, dry_run: bool) -> io::Result<()> {
         let entry_path = entry.path();
 
         if entry_path.is_dir() {
+            if should_skip_dir(&entry_path) {
+                // Optional: uncomment if you want visibility
+                // println!("[skip] {:?}", entry_path);
+                continue;
+            }
+
             if entry_path.file_name() == Some("target".as_ref()) {
                 if dry_run {
                     println!("[dry-run] would delete {:?}", entry_path);
@@ -151,4 +156,23 @@ fn visit_dir(path: &Path, dry_run: bool) -> io::Result<()> {
     }
 
     Ok(())
+}
+
+
+
+fn should_skip_dir(path: &Path) -> bool {
+    let Some(name) = path.file_name().and_then(|n| n.to_str()) else {
+        return false;
+    };
+
+    matches!(
+        name,
+        ".git"
+            | ".idea"
+            | "node_modules"
+            | ".gradle"
+            | "build"
+            | ".cargo"
+            | ".rustup"
+    )
 }
